@@ -20,9 +20,7 @@ from sklearn.neighbors import NearestNeighbors
 from scipy.sparse.csgraph import shortest_path
 
 
-# ============================================================
 # Parameters
-# ============================================================
 
 n_samples = 1500
 n_neighbors = 10
@@ -30,9 +28,7 @@ target_dim = 2
 random_state = 42
 
 
-# ============================================================
 # 1. Generate data
-# ============================================================
 
 X, color = make_swiss_roll(
     n_samples=n_samples,
@@ -44,9 +40,7 @@ color = (color - color.min()) / (color.max() - color.min())
 n = X.shape[0]
 
 
-# ============================================================
 # 2. Build nearest-neighbor graph
-# ============================================================
 
 nbrs = NearestNeighbors(
     n_neighbors=n_neighbors + 1,
@@ -64,26 +58,20 @@ for i in range(n):
         G_dist[j, i] = d
 
 
-# ============================================================
 # 3. Approximate geodesic distances
-# ============================================================
 
 Delta = shortest_path(G_dist, directed=False, unweighted=False)
 Delta_squared = Delta ** 2
 
 
-# ============================================================
 # 4. Double centering: K_iso = -1/2 H Delta^2 H
-# ============================================================
 
 I = np.eye(n)
 H = I - np.ones((n, n)) / n
 K_iso = -0.5 * H @ Delta_squared @ H
 
 
-# ============================================================
 # 5. Spectral decomposition
-# ============================================================
 
 eigvals, eigvecs = np.linalg.eigh(K_iso)
 idx = np.argsort(eigvals)[::-1]
@@ -97,9 +85,7 @@ eigvecs_pos = eigvecs[:, positive]
 Y = eigvecs_pos[:, :target_dim] @ np.diag(np.sqrt(eigvals_pos[:target_dim]))
 
 
-# ============================================================
 # 6. Original 3D data
-# ============================================================
 
 fig = plt.figure(figsize=(9, 8))
 ax = fig.add_subplot(111, projection="3d")
@@ -114,9 +100,7 @@ plt.tight_layout(rect=[0, 0.06, 1, 1])
 plt.show()
 
 
-# ============================================================
 # 7. Nearest-neighbor graph on a subset
-# ============================================================
 
 subsample = min(180, n)
 rng = np.random.default_rng(random_state)
@@ -142,9 +126,7 @@ plt.tight_layout(rect=[0, 0.06, 1, 1])
 plt.show()
 
 
-# ============================================================
 # 8. Euclidean distance vs approximate geodesic distance
-# ============================================================
 
 p1 = np.argmin(color)
 p2 = np.argmax(color)
@@ -173,9 +155,7 @@ plt.tight_layout(rect=[0, 0.06, 1, 1])
 plt.show()
 
 
-# ============================================================
 # 9. Geodesic distance matrix
-# ============================================================
 
 fig, ax = plt.subplots(figsize=(7, 7))
 im = ax.imshow(Delta, cmap="viridis", aspect="auto")
@@ -188,9 +168,7 @@ plt.tight_layout(rect=[0, 0.09, 1, 1])
 plt.show()
 
 
-# ============================================================
 # 10. Isomap embedding
-# ============================================================
 
 fig, ax = plt.subplots(figsize=(8, 7))
 scatter = ax.scatter(Y[:, 0], Y[:, 1], c=color, cmap="Spectral", s=12)
@@ -204,9 +182,7 @@ plt.tight_layout(rect=[0, 0.09, 1, 1])
 plt.show()
 
 
-# ============================================================
 # 11. Summary diagram
-# ============================================================
 
 fig, ax = plt.subplots(figsize=(12, 4))
 ax.axis("off")
@@ -228,7 +204,6 @@ plt.tight_layout()
 plt.show()
 
 print("Isomap summary")
-print("--------------")
 print(f"Number of samples: {n_samples}")
 print(f"Number of neighbors: {n_neighbors}")
 print(f"Original dimension: {X.shape[1]}")
