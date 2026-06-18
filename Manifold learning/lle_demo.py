@@ -20,9 +20,7 @@ from scipy.sparse import csr_matrix, eye
 from scipy.sparse.linalg import eigsh, ArpackNoConvergence
 
 
-# ============================================================
 # Parameters
-# ============================================================
 
 n_samples = 5000
 n_neighbors = 30
