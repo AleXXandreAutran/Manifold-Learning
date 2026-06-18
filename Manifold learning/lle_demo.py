@@ -31,27 +31,21 @@ regularization = 1e-2
 random_state = 42
 
 
-# ============================================================
 # 1. Generate data
-# ============================================================
 
 X, color = make_swiss_roll(n_samples=n_samples, noise=0.05, random_state=random_state)
 color = (color - color.min()) / (color.max() - color.min())
 n = X.shape[0]
 
 
-# ============================================================
 # 2. Find nearest neighbors
-# ============================================================
 
 nbrs = NearestNeighbors(n_neighbors=n_neighbors + 1, metric="euclidean").fit(X)
 distances, indices = nbrs.kneighbors(X)
 neighbor_indices = indices[:, 1:]
 
 
-# ============================================================
 # 3. Compute reconstruction weights W
-# ============================================================
 
 rows, cols, data = [], [], []
 
@@ -77,18 +71,14 @@ for i in range(n):
 W = csr_matrix((data, (rows, cols)), shape=(n, n))
 
 
-# ============================================================
 # 4. Build M = (I - W)^T (I - W)
-# ============================================================
 
 I = eye(n, format="csr")
 A = I - W
 M = A.T @ A
 
 
-# ============================================================
 # 5. Sparse eigenvalue problem
-# ============================================================
 
 try:
     eigvals, eigvecs = eigsh(
@@ -116,9 +106,7 @@ eigvecs = eigvecs[:, idx]
 Y = eigvecs[:, 1:target_dim + 1]
 
 
-# ============================================================
 # 6. Original data
-# ============================================================
 
 fig = plt.figure(figsize=(9, 8))
 ax = fig.add_subplot(111, projection="3d")
@@ -133,9 +121,7 @@ plt.tight_layout(rect=[0, 0.06, 1, 1])
 plt.show()
 
 
-# ============================================================
 # 7. Nearest-neighbor graph subset
-# ============================================================
 
 subsample = min(220, n)
 rng = np.random.default_rng(random_state)
@@ -159,9 +145,7 @@ plt.tight_layout(rect=[0, 0.06, 1, 1])
 plt.show()
 
 
-# ============================================================
 # 8. Reconstruction weights for one point
-# ============================================================
 
 point_id = 0
 weights_point = W.getrow(point_id).toarray().ravel()
@@ -179,9 +163,7 @@ plt.tight_layout(rect=[0, 0.10, 1, 1])
 plt.show()
 
 
-# ============================================================
 # 9. Sparse matrix visualizations
-# ============================================================
 
 fig, ax = plt.subplots(figsize=(7, 7))
 ax.spy(W, markersize=0.2)
@@ -223,9 +205,7 @@ plt.tight_layout(rect=[0, 0.10, 1, 1])
 plt.show()
 
 
-# ============================================================
 # 10. Embedding and eigenvalues
-# ============================================================
 
 fig, ax = plt.subplots(figsize=(8, 7))
 scatter = ax.scatter(Y[:, 0], Y[:, 1], c=color, cmap="Spectral", s=8)
@@ -251,9 +231,7 @@ plt.tight_layout(rect=[0, 0.10, 1, 1])
 plt.show()
 
 
-# ============================================================
 # 11. Summary diagram
-# ============================================================
 
 fig, ax = plt.subplots(figsize=(13, 4))
 ax.axis("off")
@@ -276,7 +254,6 @@ plt.show()
 
 nonzero_W = W.count_nonzero()
 print("Locally Linear Embedding summary")
-print("--------------------------------")
 print(f"Number of samples: {n_samples}")
 print(f"Number of neighbors: {n_neighbors}")
 print(f"Original dimension: {X.shape[1]}")
