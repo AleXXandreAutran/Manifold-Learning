@@ -20,9 +20,7 @@ from scipy.sparse import csr_matrix, diags
 from scipy.sparse.linalg import eigsh, ArpackNoConvergence
 
 
-# ============================================================
 # Parameters
-# ============================================================
 
 n_samples = 5000
 n_neighbors = 30
@@ -31,26 +29,20 @@ sigma = 2.0
 random_state = 42
 
 
-# ============================================================
 # 1. Generate data
-# ============================================================
 
 X, color = make_swiss_roll(n_samples=n_samples, noise=0.05, random_state=random_state)
 color = (color - color.min()) / (color.max() - color.min())
 n = X.shape[0]
 
 
-# ============================================================
 # 2. Find nearest neighbors
-# ============================================================
 
 nbrs = NearestNeighbors(n_neighbors=n_neighbors + 1, metric="euclidean").fit(X)
 distances, indices = nbrs.kneighbors(X)
 
 
-# ============================================================
 # 3. Build sparse weight matrix W
-# ============================================================
 
 rows, cols, data = [], [], []
 for i in range(n):
@@ -68,18 +60,14 @@ W.sum_duplicates()
 W.data = np.clip(W.data, 0.0, 1.0)
 
 
-# ============================================================
 # 4. Build D and L = D - W
-# ============================================================
 
 degrees = np.asarray(W.sum(axis=1)).ravel()
 D = diags(degrees, format="csr")
 L = D - W
 
 
-# ============================================================
 # 5. Generalized eigenvalue problem L u = lambda D u
-# ============================================================
 
 try:
     eigvals, eigvecs = eigsh(
@@ -105,9 +93,7 @@ eigvecs = eigvecs[:, idx]
 Y = eigvecs[:, 1:target_dim + 1]
 
 
-# ============================================================
 # 6. Original data
-# ============================================================
 
 fig = plt.figure(figsize=(9, 8))
 ax = fig.add_subplot(111, projection="3d")
@@ -122,9 +108,7 @@ plt.tight_layout(rect=[0, 0.06, 1, 1])
 plt.show()
 
 
-# ============================================================
 # 7. Graph subset
-# ============================================================
 
 subsample = min(220, n)
 rng = np.random.default_rng(random_state)
@@ -148,9 +132,7 @@ plt.tight_layout(rect=[0, 0.06, 1, 1])
 plt.show()
 
 
-# ============================================================
 # 8. Sparsity and zoom plots
-# ============================================================
 
 fig, ax = plt.subplots(figsize=(7, 7))
 ax.spy(W, markersize=0.2)
@@ -192,9 +174,7 @@ plt.tight_layout(rect=[0, 0.10, 1, 1])
 plt.show()
 
 
-# ============================================================
 # 9. Embedding and eigenvalues
-# ============================================================
 
 fig, ax = plt.subplots(figsize=(8, 7))
 scatter = ax.scatter(Y[:, 0], Y[:, 1], c=color, cmap="Spectral", s=8)
@@ -220,9 +200,7 @@ plt.tight_layout(rect=[0, 0.10, 1, 1])
 plt.show()
 
 
-# ============================================================
 # 10. Summary diagram
-# ============================================================
 
 fig, ax = plt.subplots(figsize=(13, 4))
 ax.axis("off")
@@ -246,7 +224,6 @@ plt.show()
 
 nonzero_W = W.count_nonzero()
 print("Laplacian Eigenmaps summary")
-print("---------------------------")
 print(f"Number of samples: {n_samples}")
 print(f"Number of neighbors: {n_neighbors}")
 print(f"Original dimension: {X.shape[1]}")
