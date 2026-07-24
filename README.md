@@ -14,17 +14,6 @@ The goal is to illustrate how high-dimensional nonlinear data can be represented
 pip install -r requirements.txt
 ```
 
-## Files
-
-```text
-Manifold learning/
-├── isomap_demo.py
-├── laplacian_eigenmaps_demo.py
-├── lle_demo.py
-├── requirements.txt
-└── README.md
-```
-
 ## 1. Isomap
 
 **Purpose:** preserve approximate geodesic distances along the underlying manifold.
